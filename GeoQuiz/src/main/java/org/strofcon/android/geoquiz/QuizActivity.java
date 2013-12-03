@@ -11,14 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class QuizActivity extends ActionBarActivity {
 
-    private Button mTrueButton;
-    private Button mFalseButton;
-    private Button mNextButton;
     private TextView mQuestionTextView;
 
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
@@ -72,27 +70,36 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
 
-        mTrueButton = (Button)findViewById(R.id.true_button);
-        mTrueButton.setOnClickListener(new View.OnClickListener() {
+        Button trueButton = (Button) findViewById(R.id.true_button);
+        trueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkAnswer(true);
             }
         });
 
-        mFalseButton = (Button)findViewById(R.id.false_button);
-        mFalseButton.setOnClickListener(new View.OnClickListener() {
+        Button falseButton = (Button) findViewById(R.id.false_button);
+        falseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkAnswer(false);
             }
         });
 
-        mNextButton = (Button)findViewById(R.id.next_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton nextImageButton = (ImageButton) findViewById(R.id.next_imagebutton);
+        nextImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                updateQuestion();
+            }
+        });
+
+        ImageButton previousImageButton = (ImageButton) findViewById(R.id.previous_imagebutton);
+        previousImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCurrentIndex = Math.abs((mCurrentIndex - 1) % mQuestionBank.length);
                 updateQuestion();
             }
         });
