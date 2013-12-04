@@ -17,6 +17,7 @@ import android.widget.Toast;
 public class QuizActivity extends ActionBarActivity {
 
     private static final String TAG = "QuizActivity";
+    private static final String BAB = "index";
 
     private TextView mQuestionTextView;
 
@@ -105,6 +106,19 @@ public class QuizActivity extends ActionBarActivity {
                 updateQuestion();
             }
         });
+
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(BAB, 0);
+        }
+
+        updateQuestion();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(BAB, mCurrentIndex);
     }
 
     @Override
