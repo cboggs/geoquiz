@@ -22,6 +22,13 @@ public class QuizActivity extends ActionBarActivity {
 
     private TextView mQuestionTextView;
 
+    private Button mCheatButton;
+    private Button mTrueButton;
+    private Button mFalseButton;
+    private ImageButton mNextImageButton;
+    private ImageButton mPreviousImageButton;
+
+
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
         new TrueFalse(R.string.question_oceans, true),
         new TrueFalse(R.string.question_mideast, false),
@@ -74,24 +81,24 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
 
-        Button trueButton = (Button) findViewById(R.id.true_button);
-        trueButton.setOnClickListener(new View.OnClickListener() {
+        mTrueButton = (Button) findViewById(R.id.true_button);
+        mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkAnswer(true);
             }
         });
 
-        Button falseButton = (Button) findViewById(R.id.false_button);
-        falseButton.setOnClickListener(new View.OnClickListener() {
+        mFalseButton = (Button) findViewById(R.id.false_button);
+        mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkAnswer(false);
             }
         });
 
-        ImageButton nextImageButton = (ImageButton) findViewById(R.id.next_imagebutton);
-        nextImageButton.setOnClickListener(new View.OnClickListener() {
+        mNextImageButton = (ImageButton) findViewById(R.id.next_imagebutton);
+        mNextImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
@@ -99,8 +106,8 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
 
-        ImageButton previousImageButton = (ImageButton) findViewById(R.id.previous_imagebutton);
-        previousImageButton.setOnClickListener(new View.OnClickListener() {
+        mPreviousImageButton = (ImageButton) findViewById(R.id.previous_imagebutton);
+        mPreviousImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCurrentIndex = Math.abs((mCurrentIndex - 1) % mQuestionBank.length);
@@ -112,12 +119,14 @@ public class QuizActivity extends ActionBarActivity {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
 
-        Button cheatButton = (Button) findViewById(R.id.cheat_button);
-        cheatButton.setOnClickListener(new View.OnClickListener() {
+        mCheatButton = (Button) findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(QuizActivity.this, CheatActivity.class);
-                startActivity(i);
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
+                i.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+                startActivityForResult(i, 0);
             }
         });
 
