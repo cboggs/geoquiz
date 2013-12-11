@@ -1,5 +1,6 @@
 package org.strofcon.android.geoquiz;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ public class QuizActivity extends ActionBarActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
+    private static final String KEY_CHEATER = "cheater";
 
     private TextView mQuestionTextView;
 
@@ -62,8 +64,6 @@ public class QuizActivity extends ActionBarActivity {
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
             .show();
-
-        mIsCheater = false;
     }
 
     @Override
@@ -72,10 +72,17 @@ public class QuizActivity extends ActionBarActivity {
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
 
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
+        }
+
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mIsCheater = savedInstanceState.getBoolean(KEY_CHEATER);
+            Log.i(TAG, "mIsCheater: "+mIsCheater);
         }
 
         mQuestionTextView = (TextView)findViewById(R.id.question_text_view);
@@ -110,6 +117,7 @@ public class QuizActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                mIsCheater = false;
                 updateQuestion();
             }
         });
@@ -119,13 +127,11 @@ public class QuizActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 mCurrentIndex = Math.abs((mCurrentIndex - 1) % mQuestionBank.length);
+                mIsCheater = false;
                 updateQuestion();
             }
         });
 
-        if (savedInstanceState != null) {
-            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-        }
 
         mCheatButton = (Button) findViewById(R.id.cheat_button);
         mCheatButton.setOnClickListener(new View.OnClickListener() {
@@ -143,17 +149,23 @@ public class QuizActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "onActivityResult() called");
+        Log.i(TAG, "resultCode: "+resultCode);
+        Log.i(TAG, "requestCode: "+requestCode);
         if (data == null) {
+            Log.i(TAG, "onActivityResult Data: null");
             return;
         }
         mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+        Log.i(TAG, "mIsCheater: "+mIsCheater);
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        Log.i(TAG, "onSaveInstanceState");
+        Log.i(TAG, "onSaveInstanceState() called");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putBoolean(KEY_CHEATER, mIsCheater);
     }
 
     @Override
